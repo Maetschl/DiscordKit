@@ -12,13 +12,14 @@ public struct BotEmbed: Codable {
     /// An embed field
     public struct Field: Codable {
         /// Create an embed field
-        public init(_ name: String, value: String, inline: Bool = false) {
+        public init(_ name: String, value: String, inline: Bool = false, image: EmbedMedia? = nil) {
             assert(!name.isEmpty, "Name cannot be empty")
             assert(!value.isEmpty, "Value cannot be empty")
 
             self.name = name
             self.value = value
             self.inline = inline
+            self.image = image
         }
         /// Construct an empty field
         ///
@@ -31,6 +32,7 @@ public struct BotEmbed: Codable {
         public let name: String
         public let value: String
         public let inline: Bool
+        public let image: EmbedMedia?
     }
 
     enum CodingKeys: CodingKey {
@@ -42,14 +44,16 @@ public struct BotEmbed: Codable {
         case color
         case fields
         case footer
+        case image
     }
 
     // Always rich as that's the only type supported
-    private let type = EmbedType.rich
+    private let type = EmbedType.image
 
     // Fields are implicitly internal(get) as we do not want them appearing in autocomplete
     fileprivate(set) var title: String?
     fileprivate(set) var description: String?
+    fileprivate(set) var image: EmbedMedia?
     fileprivate(set) var url: URL?
     fileprivate(set) var timestamp: Date?
     fileprivate(set) var color: Int?
@@ -70,6 +74,13 @@ public extension BotEmbed {
         embed.title = title
         return embed
     }
+    
+    func image(_ image: EmbedMedia?) -> Self {
+        var embed = self
+        guard let image = image else { return embed }
+        embed.image = image
+        return embed
+    }
 
     func description(_ description: String?) -> Self {
         var embed = self
@@ -77,9 +88,11 @@ public extension BotEmbed {
         return embed
     }
 
-    func footer(_ text: String) -> Self {
+    func footer(_ text: String?) -> Self {
         var embed = self
-        embed.footer = .init(text: text)
+        if let text = text {
+            embed.footer = .init(text: text)
+        }
         return embed
     }
 

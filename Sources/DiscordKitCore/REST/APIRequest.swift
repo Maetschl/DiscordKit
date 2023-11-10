@@ -56,10 +56,10 @@ public extension DiscordREST {
         assert(token != nil, "Token should not be nil. Please set a token before using the REST API.")
         let token = token! // Force unwrapping is appropriete here
 
-        Self.log.trace("Making request", metadata: [
-            "method": "\(method)",
-            "path": "\(path)"
-        ])
+//        Self.log.trace("Making request", metadata: [
+//            "method": "\(method)",
+//            "path": "\(path)"
+//        ])
 
         let apiURL = DiscordKitConfig.default.restBase.appendingPathComponent(path, isDirectory: false)
 
@@ -100,7 +100,6 @@ public extension DiscordREST {
             req.setValue("application/json", forHTTPHeaderField: "content-type")
             req.httpBody = body
         }
-
         // Make request
         guard let (data, response) = try? await DiscordREST.session.data(for: req),
               let httpResponse = response as? HTTPURLResponse else {
@@ -167,11 +166,28 @@ public extension DiscordREST {
         body: B
     ) async throws {
         let payload = try DiscordREST.encoder.encode(body)
-        _ = try await makeRequest(
+        let value = try await makeRequest(
             path: path,
             body: payload,
             method: .post
         )
+    }
+
+    /// Make a `POST` request to the Discord REST API for endpoints
+    /// that require no payload
+    func postReq<T: Decodable>(
+        path: String
+    ) async throws -> T {
+        let respData = try await makeRequest(
+            path: path,
+            body: nil,
+            method: .post
+        )
+        do {
+            return try DiscordREST.decoder.decode(T.self, from: respData)
+        } catch {
+            throw RequestError.jsonDecodingError(error: error)
+        }
     }
 
     /// Make a `POST` request to the Discord REST API, for endpoints

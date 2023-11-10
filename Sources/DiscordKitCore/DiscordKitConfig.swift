@@ -145,14 +145,11 @@ public struct DiscordKitConfig {
     /// The user agent to be sent with requests to the Discord API
     public let userAgent: String
 
-    /// If zlib stream compression is enabled for communication with the gateway
-    public let streamCompression: Bool
-
     /// Base REST endpoint URL
     public let restBase: URL
     /// Gateway WebSocket URL
     public var gateway: String {
-        "wss://gateway.discord.gg/?v=\(version)&encoding=json\(streamCompression ? "&compress=zlib-stream" : "")"
+        "wss://gateway.discord.gg/?v=\(version)&encoding=json"
     }
 
     // The token to use to authenticate with both the Discord REST and Gateway APIs
@@ -178,13 +175,11 @@ public struct DiscordKitConfig {
         baseURL: String = "canary.discord.com",
         version: Int? = nil,
         properties: GatewayConnProperties? = nil,
-        intents: Intents? = nil,
-        streamCompression: Bool = true
+        intents: Intents? = nil
     ) {
         self.cdnURL = "https://cdn.discordapp.com/"
         self.baseURL = URL(string: "https://\(baseURL)/")!
         self.intents = intents
-        self.streamCompression = streamCompression
 
         if let version {
             self.version = version

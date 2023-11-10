@@ -11,4 +11,7 @@ public extension NSNotification.Name {
     static let ready = Self("dk-ready")
 
     static let messageCreate = Self("dk-msg-create")
+
+    static let guildMemberAdd = Self("dk-guild-member-add")
+    static let buttonReaction = Self("button-reaction")
 }

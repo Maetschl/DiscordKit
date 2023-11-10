@@ -228,7 +228,8 @@ public class RobustWebSocket: NSObject {
                     case .data(let data):
                         if let decompressed = self.decompressor.push_data(data) {
                             try self.handleMessage(with: decompressed)
-                        } else { Self.log.trace("Decompression did not return any result - compressed packet is not complete") }
+                        }
+                        else { Self.log.trace("Decompression did not return any result - compressed packet is not complete") }
                     case .string(let str): try self.handleMessage(with: str)
                     @unknown default: Self.log.warning("Unknown sock message case!")
                     }
@@ -245,6 +246,7 @@ public class RobustWebSocket: NSObject {
         #endif
     }
 
+    // swiftlint:disable:next function_body_length
     private func connect() {
         guard !explicitlyClosed else { return }
         #if canImport(WebSocket)
@@ -317,7 +319,7 @@ public class RobustWebSocket: NSObject {
 
         switch decoded.data {
         case .heartbeat:
-            Self.log.debug("[HEARTBEAT] Sending expedited heartbeat as requested")
+            //Self.log.debug("[HEARTBEAT] Sending expedited heartbeat as requested")
             send(.heartbeat, data: GatewayHeartbeat(seq))
         case .heartbeatAck: hbTimeout?.invalidate()
         case .hello(let hello):
@@ -486,7 +488,7 @@ public extension RobustWebSocket {
             return
         }
 
-        Self.log.debug("[HEARTBEAT] Sending heartbeat")
+        //Self.log.debug("[HEARTBEAT] Sending heartbeat")
         send(.heartbeat, data: GatewayHeartbeat(seq))
 
         hbTimeout?.invalidate()
@@ -674,11 +676,11 @@ public extension RobustWebSocket {
         guard let encoded = try? DiscordREST.encoder.encode(sendPayload)
         else { return }
 
-        Self.log.trace("Outgoing Payload", metadata: [
-            "opcode": "\(opcode)",
-            "data": "\((T.self == GatewayIdentify.self ? nil : data))", // Don't log tokens.
-            "seq": "\(seq ?? -1)"
-        ])
+//        Self.log.trace("Outgoing Payload", metadata: [
+//            "opcode": "\(opcode)",
+//            "data": "\(String(describing: (T.self == GatewayIdentify.self ? nil : data)))", // Don't log tokens.
+//            "seq": "\(seq ?? -1)"
+//        ])
 
         #if canImport(WebSocket)
         socket.send(encoded)

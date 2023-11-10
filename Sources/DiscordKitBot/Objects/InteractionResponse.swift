@@ -79,9 +79,58 @@ public struct InteractionResponse: Encodable {
                 }
             }
         }
-
+        
+//        public struct Options: Encodable {
+//
+//            public struct OptionValue: Encodable {
+//                public let type: Int
+//                public let name: String
+//                public let value: String
+//                public let focused: Bool
+//
+//                public init(type: Int, name: String, value: String, focused: Bool) {
+//                    self.type = type
+//                    self.name = name
+//                    self.value = value
+//                    self.focused = focused
+//                }
+//            }
+            /*
+             {
+               "type": 4, //applicationCmdAutocomplete or interactionReply?
+               "data": {
+                 "id": "816437322781949972",
+                 "name": "airhorn",
+                 "type": 1,
+                 "version": "847194950382780532",
+                 "options": [
+                   {
+                     "type": 3,
+                     "name": "variant",
+                     "value": "data a user is typ",
+                     "focused": true
+                   }
+                 ]
+               }
+             }
+             */
+//            public let id: String
+//            public let name: String
+//            public let type: Int
+//            public let version: String
+//            public let options: [OptionValue]
+//
+//            public init(id: String, name: String, type: Int, version: String, options: [OptionValue]) {
+//                self.id = id
+//                self.name = name
+//                self.type = type
+//                self.version = version
+//                self.options = options
+//            }
+//        }
+        
         case message(Message)
-        // case autocompleteResult
+//        case autocompleteResult(Options)
         // case modal
 
         public func encode(to encoder: Encoder) throws {
@@ -89,6 +138,7 @@ public struct InteractionResponse: Encodable {
 
             switch self {
             case .message(let message): try container.encode(message)
+//            case .autocompleteResult(let options): try container.encode(options)
             }
         }
     }

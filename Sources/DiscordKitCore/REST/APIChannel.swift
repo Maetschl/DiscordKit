@@ -3,7 +3,21 @@
 import Foundation
 
 public extension DiscordREST {
-        /// Get Channel Messages
+    /// Get channel
+    ///
+    /// > DELETE: `/channels/{channel.id}`
+    func getChannel(id: Snowflake) async throws -> Channel {
+        return try await getReq(path: "channels/\(id)")
+    }
+
+    /// Delete channel
+    ///
+    /// > DELETE: `/channels/{channel.id}`
+    func deleteChannel(id: Snowflake) async throws {
+        try await deleteReq(path: "channels/\(id)")
+    }
+
+    /// Get Channel Messages
     ///
     /// > GET: `/channels/{channel.id}/messages`
     func getChannelMsgs(
@@ -58,7 +72,7 @@ public extension DiscordREST {
     ) async throws {
         return try await deleteReq(path: "channels/\(id)/messages/\(msgID)")
     }
-
+    
     /// Acknowledge Message Read (Undocumented endpoint!)
     ///
     /// > POST: `/channels/{channel.id}/messages/{message.id}/ack`
@@ -67,6 +81,17 @@ public extension DiscordREST {
         msgID: Snowflake
     ) async throws -> MessageReadAck {
         return try await postReq(path: "channels/\(id)/messages/\(msgID)/ack", body: MessageReadAck(token: nil), attachments: [])
+    }
+    
+    /// Acknowledge Interaction Read
+    ///
+    /// > POST: `/interactions/{interaction.id}/{interaction.token}/callback`
+    func ackInteractionCallback(
+        id: Snowflake,
+        interactionToken: Snowflake,
+        type: InteractionCallbackType
+    ) async throws -> InteractionCallback {
+        return try await postReq(path: "interactions/\(id)/\(interactionToken)/callback", body: InteractionCallback(type: type), attachments: [])
     }
 
     /// Typing Start (Undocumented endpoint!)
@@ -100,19 +125,27 @@ public extension DiscordREST {
             body: body
         )
     }
-    /// Crosspost Message
-    ///
-    /// > POST: `/channels/{channel.id}/messages/{message.id}/crosspost`
-    func crosspostMessage<T: Decodable, B: Encodable>(
+    
+    func createMessage<B: Encodable>(
         _ channelId: Snowflake,
-        _ messageId: Snowflake,
         _ body: B
-    ) async throws -> T {
-        return try await postReq(
-            path: "channels/\(channelId)/messages/\(messageId)/crosspost",
+    ) async throws {
+        _ = try await postReq(
+            path: "channels/\(channelId)/messages",
             body: body
         )
     }
+    /// Crosspost Message
+    ///
+    /// > POST: `/channels/{channel.id}/messages/{message.id}/crosspost`
+    func crosspostMessage<T: Decodable>(
+        _ channelId: Snowflake,
+        _ messageId: Snowflake
+    ) async throws -> T {
+        return try await postReq(
+            path: "channels/\(channelId)/messages/\(messageId)/crosspost")
+    }
+
     /// Create Reaction
     ///
     /// > PUT: `/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me`
@@ -201,11 +234,11 @@ public extension DiscordREST {
     /// Bulk Delete Messages
     ///
     /// > POST: `/channels/{channel.id}/messages/bulk-delete`
-    func bulkDeleteMessages<T: Decodable, B: Encodable>(
+    func bulkDeleteMessages<B: Encodable>(
         _ channelId: Snowflake,
         _ body: B
-    ) async throws -> T {
-        return try await postReq(
+    ) async throws {
+        try await postReq(
             path: "channels/\(channelId)/messages/bulk-delete",
             body: body
         )
@@ -213,12 +246,12 @@ public extension DiscordREST {
     /// Edit Channel Permissions
     ///
     /// > PUT: `/channels/{channel.id}/permissions/{overwrite.id}`
-    func editChannelPermissions<T: Decodable, B: Encodable>(
+    func editChannelPermissions<B: Encodable>(
         _ channelId: Snowflake,
         _ overwriteId: Snowflake,
         _ body: B
-    ) async throws -> T {
-        return try await putReq(
+    ) async throws {
+        try await putReq(
             path: "channels/\(channelId)/permissions/\(overwriteId)",
             body: body
         )

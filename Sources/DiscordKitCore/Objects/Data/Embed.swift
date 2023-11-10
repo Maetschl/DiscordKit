@@ -70,6 +70,17 @@ public struct EmbedMedia: Codable {
     public let proxy_url: String?
     public let height: Int?
     public let width: Int?
+    
+    public init(url: String, proxy_url: String? = nil, height: Int?, width: Int?) {
+        self.url = url
+        self.proxy_url = proxy_url
+        self.height = height
+        self.width = width
+    }
+    
+    public init(url: String) {
+        self.init(url: url, proxy_url: nil, height: nil, width: nil)
+    }
 }
 
 public struct EmbedProvider: Codable {
@@ -90,5 +101,11 @@ public struct EmbedField: Codable, Identifiable {
     public let inline: Bool?
     public var id: String {
 		name + value
+    }
+    
+    public init(name: String, value: String, inline: Bool?) {
+        self.name = name
+        self.value = value
+        self.inline = inline
     }
 }
