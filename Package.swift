@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
 	name: "DiscordKit",
 	platforms: [
-		.macOS(.v11)
+		.macOS(.v10_13)
     ],
 	products: [
         .library(name: "DiscordKitCore", targets: ["DiscordKitCore"]),
